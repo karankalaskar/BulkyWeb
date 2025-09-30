@@ -29,14 +29,14 @@ jobs:
         run: npm install
         working-directory: BulkywebNextjs/bulky-web-nextjs
 
-      # Build Next.js app (ESLint errors ignored)
+      # Build Next.js app (skip ESLint errors)
       - name: Build Next.js
         run: npm run build -- --no-lint
         working-directory: BulkywebNextjs/bulky-web-nextjs
 
-      # Export Next.js app to a folder Azure can serve
+      # Export Next.js app (use npx so next is found)
       - name: Export Next.js
-        run: next export -o ../../.next
+        run: npx next export -o ../../.next
         working-directory: BulkywebNextjs/bulky-web-nextjs
 
       # Deploy to Azure Static Web Apps
