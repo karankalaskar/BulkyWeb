@@ -15,36 +15,43 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Next.js App
     steps:
+      # Checkout the repository
       - uses: actions/checkout@v3
 
+      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
+      # Install dependencies in the app folder
       - name: Install dependencies
         run: npm install
         working-directory: BulkywebNextjs/bulky-web-nextjs
 
+      # Build Next.js app (skip ESLint errors)
       - name: Build Next.js
         run: npm run build -- --no-lint
         working-directory: BulkywebNextjs/bulky-web-nextjs
 
+      # Export Next.js app (use npx so next is found)
       - name: Export Next.js
-        run: npx next export
+        run: npx next export -o ../../.next
         working-directory: BulkywebNextjs/bulky-web-nextjs
 
+      # Deploy to Azure Static Web Apps
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GRAY_OCEAN_0D7235E0F }}
           app_location: "BulkywebNextjs/bulky-web-nextjs"
-          output_location: "BulkywebNextjs/bulky-web-nextjs/out"
+          output_location: ".next"
           api_location: ""
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
+    name: Close Pull Request Job
     steps:
       - name: Close Pull Request
         uses: Azure/static-web-apps-deploy@v1
